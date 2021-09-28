@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="header">
+    <a href="#default" class="logo">Quiz</a>
+    <div class="header-right">
+        <a th:class="__${#locale}__=='en'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='EN')}">
+            <i th:text="#{msg.en}">EN</i>
+        </a>
+        <a th:class="__${#locale}__=='ua'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='UA')}">
+            <i th:text="#{msg.ua}">UA</i>
+        </a>
+
+        <a sec:authorize="!isAuthenticated()" href="/login" th:text="#{msg.login}">
+            Login
+        </a>
+        <a sec:authorize="!isAuthenticated()" href="/register" th:text="#{msg.register}">
+            Register
+        </a>
+        <a sec:authorize="isAuthenticated()" href="/logout" th:text="#{msg.logout}">
+            Logout
+        </a>
+        <a href="/home/list" th:text="#{msg.quiz}">
+            Home
+        </a>
+        <a href="/profile/" th:text="#{msg.profile}">
+            Profile
+        </a>
+    </div>
+</div>
+<form class="modal-content animate" th:action="@{/admin/users/edit}" method="post">
+    <div class="container">
+        <label><b th:text="#{msg.name}">
+        </b></label>
+        <label>
+            <input type="text" th:title="#{msg.name-validation}" maxlength="32"
+                   pattern="[A-Za-z\u0400-\u04ff]{1,32}" th:value="${user?.getName()}"
+                   th:placeholder="#{msg.name-enter}" name="name"
+                   required>
+        </label>
+        <label><b th:text="#{msg.surname}">
+        </b></label>
+        <label>
+            <input type="text" maxlength="32" th:title="#{msg.surname-validation}"
+                   pattern="[A-Za-z\u0400-\u04ff]{1,32}"
+                   th:value="${user?.getSurname()}"
+                   th:placeholder="#{msg.surname-enter}"
+                   name="surname" required>
+        </label>
+        <label><b th:text="#{msg.email}">
+        </b></label>
+        <label>
+            <p style="  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;" th:text="${user?.getEmail()}"></p>
+        </label>
+        <label><b th:text="#{msg.role}"></b></label>
+        <select name="role">
+            <option th:value="2" th:selected="${user?.getRole().getName()=='USER'}" th:text="#{msg.user}"></option>
+            <option th:value="1" th:selected="${user?.getRole().getName()=='ADMIN'}" th:text="#{msg.admin}"></option>
+        </select>
+        <input type="hidden" name="id" th:value="${user?.getId()}">
+        <button type="submit" th:text="#{msg.edit}"></button>
+    </div>
+
+</form>
+<form class="modal-content animate" th:action="@{/admin/users/delete}" method="post">
+    <input type="hidden" name="id" th:value="${user?.getId()}">
+    <button style="background-color: red" type="submit" th:text="#{msg.user-delete}"></button>
+</form>
+
+</body>
+</html>

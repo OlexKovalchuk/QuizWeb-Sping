@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/list.css">
+    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/profile.css">
+    <style>
+        .center {
+            text-align: center;
+        }
+
+        .pagination {
+            display: inline-block;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="header">
+    <a href="#default" class="logo">Quiz</a>
+    <div class="header-right">
+        <a th:class="__${#locale}__=='en'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='EN')}">
+            <i th:text="#{msg.en}">EN</i>
+        </a>
+        <a th:class="__${#locale}__=='ua'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='UA')}">
+            <i th:text="#{msg.ua}">UA</i>
+        </a>
+
+        <a sec:authorize="!isAuthenticated()" href="/login" th:text="#{msg.login}">
+            Login
+        </a>
+        <a sec:authorize="!isAuthenticated()" href="/register" th:text="#{msg.register}">
+            Register
+        </a>
+        <a sec:authorize="isAuthenticated()" href="/logout" th:text="#{msg.logout}">
+            Logout
+        </a>
+        <a href="/home/list" th:text="#{msg.quiz}">
+            Home
+        </a>
+        <a href="/profile/" th:text="#{msg.profile}">
+            Profile
+        </a>
+    </div>
+</div>
+<div sec:authorize="hasRole('ROLE_ADMIN')">
+    <form th:action="@{/quiz/create}" method="get">
+        <button style="right:5%;top:12.5%; width:10%; position:absolute;" type="submit">
+            <span class="jss1104" th:text="#{msg.quiz-add}"></span><span class="jss539"></span></button>
+
+    </form>
+</div>
+<form action="/home/list" method="get">
+    <label for="plan" href="" th:text="#{msg.sort-by}"></label><select name="sort" id="plan">
+    <option value="questions.size" th:selected="${#httpServletRequest.getAttribute('sort')=='questions.size'}"
+            th:text="#{msg.questions}"></option>
+    <option value="duration" th:selected="${#httpServletRequest.getAttribute('sort')=='duration'}"
+            th:text="#{msg.duration}"></option>
+    <option value="difficult" th:selected="${#httpServletRequest.getAttribute('sort')=='difficult'}"
+            th:text="#{msg.difficult}"></option>
+    <option value="date" th:selected="${#httpServletRequest.getAttribute('sort')=='date'}"
+            th:text="#{msg.date}"></option>
+    <option value="topic" th:selected="${#httpServletRequest.getAttribute('sort')=='topic'}"
+            th:text="#{msg.topic}"></option>
+</select>
+    <label for="topic" href="" th:text="#{msg.topic}"></label>
+    <select name="topicId" id="topic">
+        <option value="0" th:selected="${topicId==0}" th:text="#{msg.all}"></option>
+        <option th:each="topic : ${topics}" th:value="${topic.getId()}" th:selected="${topicId == topic.getId()}"
+                th:text="${topic.getName()}"></option>
+    </select>
+
+    <button type="submit" style="left: 8.8%;
+    top: 12.1%;
+    width: 7.3%;
+    height: 1.9%;
+    position: initial;" th:text="#{msg.sort}">
+    </button>
+</form>
+<div class="container animate">
+    <div class="row">
+        <div class="col-md-3 col-sm-6" th:each="quiz : ${quizzes}">
+            <div class="serviceBox">
+                <form sec:authorize="hasRole('ROLE_ADMIN')" th:action="@{/home/delete}" method="post">
+                    <input type="hidden" name="id" th:value="${quiz?.getId()}">
+                    <button style="background:url(https://www.uidownload.com/files/240/295/614/delete-icon.jpg); position: absolute;height:20%; width:20%;top:0;right: 0;"
+                            type="submit"><img
+                            src="https://www.uidownload.com/files/240/295/614/delete-icon.jpg" width="50px"
+                            height="50px"></button>
+                </form>
+                <div class="service-content">
+                    <img src="https://clf1.medpagetoday.net/media/images/94xxx/94357.jpg" height="150px"
+                         width="200px"
+                         alt="img"
+                         style="border-radius: 60%;"/>
+                    <h3 class="title" th:text="${quiz?.getHeader()}"></h3>
+                    <p class="description" th:text="${quiz?.getHeader()}"></p>
+                </div>
+            </div>
+            <div class="jss87 jss106 jss944">
+                <div th:if="${quiz?.getDifficult()=='easy'}" style="color: green;" class="jss88 jss938 displayOutHover"
+                     th:text="#{msg.difficult-easy}">
+                </div>
+                <div th:if="${quiz?.getDifficult()=='medium'}" style="color: orange;"
+                     class="jss88 jss938 displayOutHover" th:text="#{msg.difficult-medium}">
+                </div>
+                <div th:if="${quiz?.getDifficult()=='hard'}" style="color: red;" class="jss88 jss938 displayOutHover"
+                     th:text="#{msg.difficult-hard}">
+                </div>
+            </div>
+            <div class="jss87 jss106 jss944">
+                <div style="line-height: 0.428571;font-size: 20px;" class="jss88 jss938 displayOutHover">
+                    <p th:text="#{msg.questions}+' : ' +${quiz?.getQuestions().size()}"></p>
+                    <p th:text="#{msg.duration} +' : '+ ${quiz?.getDuration()}"></p>
+                </div>
+            </div>
+            <div class="jss968">
+                <div class="jss87 jss956">
+
+                    <div class="jss88 jss121" style="padding-left: 8px" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <form th:action="@{/quiz/edit}" method="get">
+                            <button class="jss370 jss1103 jss1105 jss1108 jss949 jss951" tabindex="0"
+                                    type="submit" name="id" th:value="${quiz?.getId()}">
+                                <span class="jss1104" th:text="#{msg.edit}"></span><span
+                                    class="jss539"></span></button>
+                        </form>
+                    </div>
+                    <div class="jss88 jss121" style="padding-right: 8px">
+                        <form th:action="@{/quiz/start}" method="post">
+                            <button class="jss370 jss1103 jss1105 jss1108 jss949 jss950" tabindex="0" type="submit"
+                                    name="id" th:value="${quiz?.getId()}">
+                                <span class="jss1104" th:text="#{msg.start}"></span><span
+                                    class="jss539"></span></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="center">
+        <div class="pagination">
+            <a href="#">&laquo;</a>
+            <a th:each="index : ${#numbers.sequence(1,pagesCount)}"
+               th:class="${#httpServletRequest.getAttribute('page')==index} ? active:center"
+               th:href="@{'/home/list?page='+${index}+'&sort='+${#httpServletRequest.getAttribute('sort')}}"
+               th:text="${index}"></a>
+            <a href="#">&raquo;</a>
+        </div>
+    </div>
+</div>
+<script>
+    function getLink(page) {
+        var sort = document.getElementById('plan');
+        return '@{/home/list?page=' + page + '&sort=' + sort.value + '}';
+    }
+
+    function updateLink(a) {
+        var newurl = "";
+
+        //You could retrieve the object name
+        newurl = a.getAttribute("name");
+
+        //Or, retrieve the id
+        newurl = a.getAttribute("id");
+
+        //redirect
+        location.href = newurl;
+    }
+</script>
+</body>
+</html>

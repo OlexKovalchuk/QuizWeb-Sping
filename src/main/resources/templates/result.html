@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/table.css">
+    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/profile.css">
+    <style>
+        .center {
+            text-align: center;
+        }
+
+        .pagination {
+            display: inline-block;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="header">
+    <a href="#default" class="logo">Quiz</a>
+    <div class="header-right">
+        <a th:class="__${#locale}__=='en'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='EN')}">
+            <i th:text="#{msg.en}">EN</i>
+        </a>
+        <a th:class="__${#locale}__=='ua'?'active':''"  th:href="@{${#httpServletRequest.requestURI}(lang='UA')}">
+            <i th:text="#{msg.ua}">UA</i>
+        </a>
+
+        <a sec:authorize="!isAuthenticated()" href="/login" th:text="#{msg.login}">
+            Login
+        </a>
+        <a sec:authorize="!isAuthenticated()" href="/register" th:text="#{msg.register}">
+            Register
+        </a>
+        <a sec:authorize="isAuthenticated()" href="/logout" th:text="#{msg.logout}">
+            Logout
+        </a>
+        <a href="/home/list" th:text="#{msg.quiz}">
+            Home
+        </a>
+        <a href="/profile/" th:text="#{msg.profile}">
+            Profile
+        </a>
+    </div>
+</div>
+
+<form action="/profile/results" method="get">
+    <label for="plan" href="" th:text="#{msg.sort-by}">Sort by</label><select name="sort" id="plan">
+    <option value="passedDate" th:selected="${#httpServletRequest.getAttribute('sort')=='passedDate'}" th:text="#{msg.date}"></option>
+    <option value="score" th:selected="${#httpServletRequest.getAttribute('sort')=='score'}" th:text="#{msg.score}"></option>
+    <option value="quiz.header" th:selected="${#httpServletRequest.getAttribute('sort')=='quiz.header'}" th:text="#{msg.quiz-name}"></option>
+</select>
+    <button type="submit" style="left: 8.8%;
+    top: 12.1%;
+    width: 7.3%;
+    height: 1.9%;
+    position: initial;" th:text="#{msg.sort}">
+    </button>
+</form>
+<div class="container animate">
+    <ul class="responsive-table">
+        <li class="table-header">
+            <div class="col col-1" th:text="#{msg.topic-name}"></div>
+            <div class="col col-2" th:text="#{msg.quiz-name}"></div>
+            <div class="col col-3" th:text="#{msg.date-end}">
+            </div>
+            <div class="col col-4" th:text="#{msg.score}">
+            </div>
+        </li>
+            <li th:each="result : ${userResults}" class="table-row">
+                <div class="colbefore col-1" data-label="Customer Name" th:text="${result?.getQuiz().getTopic().getName()}"></div>
+                <div class="colbefore col-2" data-label="Customer Name" th:text="${result?.getQuiz().getHeader()}"></div>
+                <div class="colbefore col-3" data-label="Amount" th:text ="${#dates.format(result?.getPassedDate(), 'dd/MM/yyyy HH:mm')}"></div>
+                <div class="colbefore col-4" data-label="Payment Status" th:text="${result.score}"></div>
+
+            </li>
+    </ul>
+    <div class="center">
+        <div class="pagination">
+            <a href="#">&laquo;</a>
+            <a  th:each="index : ${#numbers.sequence(1,pagesCount)}" th:class="${#httpServletRequest.getAttribute('page')==index} ? active:center"
+                th:href="@{'/profile/results?page='+${index}+'&sort='+${#httpServletRequest.getAttribute('sort')}}" th:text="${index}"></a>
+            <a href="#">&raquo;</a>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

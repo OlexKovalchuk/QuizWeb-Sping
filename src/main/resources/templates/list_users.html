@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/user_table.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .center {
+            text-align: center;
+        }
+
+        .pagination {
+            display: inline-block;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+
+        .pagination a.active {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a href="#default" class="logo">Quiz</a>
+    <div class="header-right">
+        <a th:class="__${#locale}__=='en'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='EN')}">
+            <i th:text="#{msg.en}">EN</i>
+        </a>
+        <a th:class="__${#locale}__=='ua'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='UA')}">
+            <i th:text="#{msg.ua}">UA</i>
+        </a>
+
+        <a sec:authorize="!isAuthenticated()" href="/login" th:text="#{msg.login}">
+            Login
+        </a>
+        <a sec:authorize="!isAuthenticated()" href="/register" th:text="#{msg.register}">
+            Register
+        </a>
+        <a sec:authorize="isAuthenticated()" href="/logout" th:text="#{msg.logout}">
+            Logout
+        </a>
+        <a href="/home/list" th:text="#{msg.quiz}">
+            Home
+        </a>
+        <a href="/profile/" th:text="#{msg.profile}">
+            Profile
+        </a>
+    </div>
+</div>
+<div class="container">
+
+    <form action="/admin/users" method="get">
+        <label for="plan" href="">Sort by</label><select name="sort" id="plan">
+        <option value="createDate" th:selected="${#httpServletRequest.getAttribute('sort')=='createDate'}"
+                th:text="#{msg.date}"></option>
+<!--        <option value="averageScore" th:selected="${#httpServletRequest.getAttribute('sort')=='averageScore'}"-->
+<!--                th:text="#{msg.score}"></option>-->
+        <option value="email" th:selected="${#httpServletRequest.getAttribute('sort')=='email'}"
+                th:text="#{msg.block}"></option>
+    </select>
+        <button type="submit" style="left: 8.8%;
+    top: 12.1%;
+    width: 4.3%;
+    height: 1.9%;
+    position: initial;" th:text="#{msg.sort}">
+        </button>
+        <div class="caption" th:text="#{msg.users}"></div>
+        <div id="table">
+            <div class="header-row row">
+                <span class="cell primary" th:text="#{msg.email}"></span>
+                <span class="cell" th:text="#{msg.role}"></span>
+                <span class="cell" th:text="#{msg.date-create}"></span>
+                <span class="cell" th:text="#{msg.score}"></span>
+                <span class="cell" th:text="#{msg.block}"></span>
+            </div>
+
+            <div class="row" th:each="user : ${users}">
+                <input type="radio" name="expand">
+                <a th:href="@{'/admin/users/edit?id='+${user.getId()}}">  <span class="cell primary" data-label="Vehicle"  th:text="${user?.getEmail()}"></span></a>
+                <span class="cell" data-label="Exterior" th:text="${user?.getRole().getName()}"></span>
+                <span class="cell" data-label="Interior" th:text="${user?.getCreateDate()}"></span>
+                <span class="cell" data-label="Engine" th:text="${user?.getAverageScore()}"></span>
+                <span class="cell" data-label="Trans">
+                      <button type="submit" name="block" th:value="${user?.getId()}" style="  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;">
+                          <p th:if="${user?.getBlock()==0}" th:text="#{msg.block-user}"></p>
+                          <p th:if="${user?.getBlock()==1}" th:text="#{msg.unblock-user}"></p></button>
+
+            </span>
+            </div>
+        </div>
+        <div class="center">
+            <div class="pagination">
+                <a href="#">&laquo;</a>
+                <a th:each="index : ${#numbers.sequence(1,pagesCount)}"
+                   th:class="${#httpServletRequest.getAttribute('page')==index} ? active:center"
+                   th:href="@{'/admin/users?page='+${index}+'&sort='+${#httpServletRequest.getAttribute('sort')}}"
+                   th:text="${index}"></a>
+                <a href="#">&raquo;</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function getLink(page) {
+        var sort = document.getElementById('plan');
+        return '${pageContext.request.contextPath}/admin/users?sort=' + sort.value + '&page=' + page;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="header">
+    <a href="#default" class="logo">Quiz</a>
+    <div class="header-right">
+        <a th:class="__${#locale}__=='en'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='EN')}">
+            <i th:text="#{msg.en}">EN</i>
+        </a>
+        <a th:class="__${#locale}__=='ua'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='UA')}">
+            <i th:text="#{msg.ua}">UA</i>
+        </a>
+
+        <a sec:authorize="!isAuthenticated()" href="/login" th:text="#{msg.login}">
+            Login
+        </a>
+        <a sec:authorize="!isAuthenticated()" href="/register" th:text="#{msg.register}">
+            Register
+        </a>
+        <a sec:authorize="isAuthenticated()" href="/logout" th:text="#{msg.logout}">
+            Logout
+        </a>
+        <a href="/home/list" th:text="#{msg.quiz}">
+            Home
+        </a>
+        <a href="/profile" th:text="#{msg.profile}">
+            Profile
+        </a>
+    </div>
+</div>
+<div class="container">
+    <form onsubmit="return handleData();" id="createForm" class="modal-content animate"
+          th:action="@{/quiz/create}" method="post">
+        <label><b th:text="#{msg.header}"></b></label>
+        <label>
+            <input th:title="#{msg.header-validation}"
+                   th:placeholder="#{msg.header-enter}" minlength="5"
+                   maxlength="39" name="header" required>
+        </label>
+        <hr style=" clear: both;
+    border: 1px solid transparent;
+    height: 0px;">
+        <label><b th:text="#{msg.topic}"></b></label>
+        <label>
+            <select name="topic" required>
+                <option th:each="topic : ${topics}" th:value="${topic?.getId}" th:text="${topic?.getName()}"></option>
+            </select>
+        </label>
+        <hr style=" clear: both;
+    border: 1px solid transparent;
+    height: 0px;">
+        <label><b th:text="#{msg.difficult}"></b></label>
+        <label>
+            <select name="difficult" required>
+                <option style="color: green" value="easy" th:text="#{msg.difficult-easy}"></option>
+                <option style="color: orange" value="medium" th:text="#{msg.difficult-medium}"></option>
+                <option style="color: red" value="hard" th:text="#{msg.difficult-hard}"></option>
+            </select>
+        </label>
+        <hr style=" clear: both;
+    border: 1px solid transparent;
+    height: 0px;">
+        <label><b th:text="#{msg.duration}"></b></label>
+        <label>
+            <input type="text" th:title="#{msg.duration-validate}" pattern="\d{1,3}" name="duration"
+                   th:placeholder="#{msg.duration-enter}" required/>
+        </label>
+        <label><b th:text="#{msg.description}"></b></label>
+        <label>
+                <textarea th:placeholder="#{msg.description-enter}" rows="4" cols="50" maxlength="499"
+                          form="createForm"
+                          name="description">
+                </textarea>
+        </label>
+
+        <ol id="questions">
+        </ol>
+        <input type="button" onclick="createQuestion();" th:value="#{msg.question-add}"/>
+        <center>
+            <button type="submit" th:text="#{msg.quiz-save}"></button>
+        </center>
+    </form>
+</div>
+<script type="text/javascript" th:inline="javascript">
+    var question_delete = /*[[#{msg.question-delete}]]*/
+    var question_validate = /*[[#{msg.question-validate}]]*/
+    var question_enter = /*[[#{msg.question-enter}]]*/
+    var answer_add = /*[[#{msg.answer-add}]]*/
+    var answer_delete = /*[[#{msg.answer-delete}]]*/
+    var answer_enter =/*[[#{msg.answer-enter}]]*/
+    var anwer_validate = /*[[#{msg.answer-validate}]]*/
+    var description = /*[[#{msg.description}]]*/
+    var check_box_validate = /*[[#{msg.checkbox-validate}]]*/
+    var array = new Array();
+
+    var qId = 0;
+    var aId = 0;
+
+    function createQuestion() {
+        qId++;
+        let questions = document.getElementById('questions');
+        const question = document.createElement('li');
+        question.id = 'question' + qId;
+        question.innerHTML = '<input type="button" onclick="deleteQuestion(' + qId + ')" value="'+question_delete+'"/>' +
+            '<h3>'+description+'</h3><input type="text" title="'+question_validate+'" maxlength="400" name="description' + qId +
+            '" placeholder="'+question_enter+'" required/> <input type="button" onclick="createAnswer(' + qId + ')" value="'+answer_add+'"/>    <div style="visibility:hidden; color:red; " id="chk_option_error' + qId + '">' +
+             +check_box_validate+'</div>';
+        questions.appendChild(question);
+        array.push(qId);
+        createAnswer(qId);
+
+    }
+    function createAnswer(id) {
+        aId++;
+        const question = document.getElementById('question' + id);
+        const answer = document.createElement('div');
+        answer.id = question.id + '-answer-' + aId;
+        answer.innerHTML = '<input type="button" onclick="deleteAnswer(' + id + ',' + aId + ')" value="'+answer_delete+'"/>   <hr style=" clear: both;' +
+            ' border: 1px solid transparent;  height: 0px;"> <input type="checkbox" name="question-' + question.id.substr(8) + '-answers" id="question-' + question.id.substr(8) + '-answers-' + aId + '" value="' + aId + '"/>' +
+            ' <input type = "text" title="'+anwer_validate+'" maxlength="100" name="answer-' + aId + '" placeholder="'+answer_enter+'" required />';
+        question.appendChild(answer);
+        const answerArray = questionMap.get(parseInt(question.id.substr(8)));
+        answerArray.push(aId);
+    }
+
+    function deleteQuestion(id) {
+        document.getElementById('question' + id).remove();
+        removeA(array, id);
+    }
+
+    function removeA(arr) {
+        var what, a = arguments, L = a.length, ax;
+        while (L > 1 && arr.length) {
+            what = a[--L];
+            while ((ax = arr.indexOf(what)) !== -1) {
+                arr.splice(ax, 1);
+            }
+        }
+        return arr;
+    }
+
+    function deleteAnswer(id, id2) {
+        document.getElementById('question' + id + "-answer-" + id2).remove();
+
+    }
+
+    function getAnswerCount() {
+        return aId;
+    }
+
+    function handleData() {
+        var form_data = new FormData(document.querySelector('form'));
+        for (const value of array) {
+            if (!form_data.has('question-' + value + '-answers')) {
+                document.getElementById("chk_option_error" + value).style.visibility = "visible";
+                return false
+            }
+            document.getElementById("chk_option_error" + value).style.visibility = "hidden";
+        }
+        return true;
+    }
+</script>
+</body>
+</html>

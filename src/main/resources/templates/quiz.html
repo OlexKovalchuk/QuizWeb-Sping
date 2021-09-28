@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/profile.css">
+    <link rel="stylesheet" href="/static/css/test.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="header">
+    <a href="#default" class="logo">Quiz</a>
+</div>
+
+<div class="container" style="margin: 20px">
+        <span id="remainingTime"
+              style="position: fixed;top:90px;left: 80%;font-size: 23px;background: rgba(255,0,77,0.38);border-radius: 5px;padding: 10px;box-shadow: 2px -2px 6px 0px;">
+        </span>
+    <form th:action="@{/quiz/finish}" method="post">
+        <ol>
+                <li th:each ="question,iterQuestion : ${quiz?.getQuestions()}">
+                    <h3 th:text="${question?.getDescription()}"></h3>
+
+                        <div th:each="answer,iterAnswer: ${question?.getAnswers()}">
+                            <input type="checkbox" th:name="'question-'+${iterQuestion.index}+'-answers'"
+                                   th:id="'question-'+${iterQuestion.index}+'-answers-'+${iterAnswer.index}" th:value="${iterAnswer.index}"/>
+                            <label th:for="'question-'+${iterQuestion.index}+'-answers-'+${iterAnswer.index}" th:text="${iterAnswer.index}+') '+${answer?.getDescription()}" ></label>
+                        </div>
+
+                </li>
+        </ol>
+        <input type="hidden" name="id" th:value="${quiz?.getId()}">
+        <input class="fill" type="submit" id="quiz"/>
+    </form>
+</div>
+<script type="text/javascript" th:inline="javascript">
+    var time =  /*[[${quiz?.getDuration()}]]*/
+    time--;
+    var sec = 59;
+    document.getElementById("remainingTime").innerHTML = time + " : " + sec;
+    //it calls fuction after specific time again and again
+    var x = window.setInterval(timerFunction, 1000);
+
+    function timerFunction() {
+        sec--;
+        // Display the result in the element with id="demo"
+
+
+        if (time < 0) {
+            clearInterval(x);
+            document.getElementById("remainingTime").innerHTML = "00 : 00";
+            document.getElementById("quiz").click();
+        }
+        document.getElementById("remainingTime").innerHTML = time + " : " + sec;
+        if (sec == 0) {
+            sec = 60;
+            time--;
+
+        }
+    }
+</script>
+</body>
+</html>

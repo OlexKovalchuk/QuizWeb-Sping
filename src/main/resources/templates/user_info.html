@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="header">
+    <a href="#default" class="logo">Quiz</a>
+    <div class="header-right">
+        <a th:class="__${#locale}__=='en'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='EN')}">
+            <i th:text="#{msg.en}">EN</i>
+        </a>
+        <a th:class="__${#locale}__=='ua'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='UA')}">
+            <i th:text="#{msg.ua}">UA</i>
+        </a>
+
+        <a sec:authorize="!isAuthenticated()" href="/login" th:text="#{msg.login}">
+            Login
+        </a>
+        <a sec:authorize="!isAuthenticated()" href="/register" th:text="#{msg.register}">
+            Register
+        </a>
+        <a sec:authorize="isAuthenticated()" href="/logout" th:text="#{msg.logout}">
+            Logout
+        </a>
+        <a href="/home/list" th:text="#{msg.quiz}">
+            Home
+        </a>
+        <a href="/profile/" th:text="#{msg.profile}">
+            Profile
+        </a>
+    </div>
+</div>
+<div class="container">
+    <form class="modal-content animate" action="/profile/editRegalia" method="post">
+        <label><b th:text="#{msg.name}">
+        </b></label>
+        <label>
+            <input type="text" th:title="#{msg.name-validation}" maxlength="32"
+                   pattern="[A-Za-z\u0400-\u04ff]{1,32}" th:value="${user?.getName()}"
+                   th:placeholder="#{msg.name-enter}" name="name"
+                   required>
+        </label>
+        <label><b th:text="#{msg.surname}">
+        </b></label>
+        <label>
+            <input type="text" maxlength="32" th:title="#{msg.surname-validation}"
+                   pattern="[A-Za-z\u0400-\u04ff]{1,32}"
+                   th:value="${user?.getSurname()}"
+                   th:placeholder="#{msg.surname-enter}"
+                   name="surname" required>
+        </label>
+        <button type="submit" th:text="#{msg.edit}">
+        </button>
+    </form>
+    <form class="modal-content animate" action="/profile/edit" method="post">
+        <label><b th:text="#{msg.email}">
+        </b></label>
+        <label>
+            <input type="text" th:title="#{msg.email-validation}" maxlength="45"
+                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                   th:value="${user?.getEmail()}" th:placeholder="#{msg.email-enter}" name="email"
+                   required>
+        </label>
+        <label><b th:text="#{msg.password}">
+        </b></label>
+        <label>
+            <input type="password" minlength="6" maxlength="45"
+                   th:title="#{msg.password-validation}"
+                   th:placeholder="#{msg.enter-password}"
+                   pattern="[A-Za-z0-9 ]{1,32}"
+                   name="password">
+        </label>
+        <button type="submit" th:text="#{msg.edit}">
+        </button>
+        <label><b style="color:red" th:text="${error}"></b></label>
+    </form>
+</div>
+</body>
+</html>
