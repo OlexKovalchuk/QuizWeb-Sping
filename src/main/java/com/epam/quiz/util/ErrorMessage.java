@@ -44,13 +44,6 @@ public class ErrorMessage {
         return buttonName;
     }
 
-    public void setButtonName(String buttonName) {
-        this.buttonName = buttonName;
-    }
-
-    public String getRedirectUrl() {
-        return redirectUrl;
-    }
 
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
