@@ -9,6 +9,7 @@ import com.epam.quiz.service.impl.RoleServiceImpl;
 import com.epam.quiz.service.impl.UserServiceImpl;
 import com.epam.quiz.service.interfaces.RoleService;
 import com.epam.quiz.util.Pages;
+import com.epam.quiz.util.WebPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class RegisterController {
             return new ModelAndView("redirect:/register?error");
         }
         authWithAuthManager(request, user.getEmail(), password);
-        return new ModelAndView("redirect:/home/list");
+         return new ModelAndView(WebPath.REDIRECT+WebPath.HOME);
     }
 
     @GetMapping(value = "/login")

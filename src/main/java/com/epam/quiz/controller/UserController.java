@@ -5,6 +5,7 @@ import com.epam.quiz.entity.User;
 import com.epam.quiz.service.impl.ResultServiceImpl;
 import com.epam.quiz.service.impl.UserServiceImpl;
 import com.epam.quiz.util.Pages;
+import com.epam.quiz.util.WebPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -69,7 +70,7 @@ public class UserController {
         principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         user.setEmail(((UserDetails) principal).getUsername());
         userService.updateUserPersonalInfo(user);
-        return "redirect:/profile/edit";
+        return WebPath.REDIRECT+WebPath.PROFILE_EDIT;
     }
     @GetMapping("/results")
     String getUserResults(@RequestParam(defaultValue = "passedDate") String sort, @RequestParam(defaultValue =
@@ -109,10 +110,10 @@ public class UserController {
         if (!user.getPassword().isEmpty() && !user.getEmail().isEmpty()) {
             authWithAuthManager(request, user.getEmail(), password);
         } else if (!user.getPassword().isEmpty() || !user.getEmail().isEmpty()) {
-            return "redirect:/logout";
+            return WebPath.REDIRECT+WebPath.LOGOUT;
         }
 
-        return "redirect:/profile/edit";
+        return WebPath.REDIRECT+WebPath.PROFILE_EDIT;
     }
 
     public void authWithAuthManager(HttpServletRequest request, String username, String password) {

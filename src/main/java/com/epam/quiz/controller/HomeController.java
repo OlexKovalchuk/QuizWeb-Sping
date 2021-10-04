@@ -4,6 +4,7 @@ import com.epam.quiz.entity.Quiz;
 import com.epam.quiz.service.impl.QuizServiceImpl;
 import com.epam.quiz.service.interfaces.TopicService;
 import com.epam.quiz.util.Pages;
+import com.epam.quiz.util.WebPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -52,6 +53,6 @@ public class HomeController {
     @PostMapping("/delete")
     public String deleteQuiz(@RequestParam("id") Long id) {
         quizService.deleteQuiz(id);
-        return "redirect:/home/list";
+        return WebPath.REDIRECT+WebPath.HOME;
     }
 }

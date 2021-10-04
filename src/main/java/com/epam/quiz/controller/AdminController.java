@@ -5,6 +5,7 @@ import com.epam.quiz.entity.User;
 import com.epam.quiz.service.impl.ResultServiceImpl;
 import com.epam.quiz.service.impl.UserServiceImpl;
 import com.epam.quiz.util.Pages;
+import com.epam.quiz.util.WebPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -72,7 +73,7 @@ public class AdminController {
     @PostMapping("/users/delete")
     String deleteUser(Model model, @RequestParam("id") Long id) {
         userService.deleteUser(id);
-        return "redirect:/admin/users";
+        return WebPath.REDIRECT+WebPath.ADMIN_USERS_LIST;
     }
 
 }
