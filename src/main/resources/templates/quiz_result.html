@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Quiz result</title>
+    <link rel="stylesheet" href="/static/css/profile.css">
+    <link rel="stylesheet" href="/static/css/test.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="header">
+    <a href="#default" class="logo">Quiz</a>
+</div>
+
+<div class="container" style="margin: 20px">
+        <ol>
+            <li th:each="question,iterQuestion : ${quiz?.getQuestions()}">
+                <h3 th:text="${question?.getDescription()}"></h3>
+
+                <div th:each="answer,iterAnswer: ${question?.getAnswers()}">
+                    <input disabled type="checkbox" th:checked="${userAnswers?.get(iterQuestion.index)?.contains(iterAnswer.index)}"/>
+                    <label th:classappend="${answer?.getAnswer()==1}?correct:wrong" th:for="'question-'+${iterQuestion.index}+'-answers-'+${iterAnswer.index}"
+                           th:text="${iterAnswer.index}+') '+${answer?.getDescription()}"></label>
+                </div>
+            </li>
+        </ol>
+    <hr style=" clear: both;
+    border: 1px solid transparent;
+    height: 0px;">
+    <p style=" vertical-align: middle; font-size:20px" th:text="#{msg.your-score}+${score}" ></p>
+    <hr style=" clear: both;
+    border: 1px solid transparent;
+    height: 0px;">
+    <form method="get" th:action="@{/home/list}">
+        <button type="submit" class="fill" th:text="#{msg.go-to-quizzes}"></button>
+    </form>
+</div>
+</body>
+</html>

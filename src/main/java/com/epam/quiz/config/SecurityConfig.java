@@ -12,17 +12,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private MyUserDetailsService userDetailsService;
+    private final MyUserDetailsService userDetailsService;
+
+    public SecurityConfig(MyUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/admin/*","/quiz/editInfo","/quiz/editQuestions","/quiz/create","/home/delete")
                 .hasRole("ADMIN")
-                .antMatchers("/profile/*","/quiz/*")
+                .antMatchers("/profile/*","/quiz/start","/quiz/finish")
                 .hasAnyRole("ADMIN", "USER")
                 .and()
                 .exceptionHandling()

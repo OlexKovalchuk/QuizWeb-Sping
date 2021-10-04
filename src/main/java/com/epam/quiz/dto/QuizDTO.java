@@ -23,8 +23,4 @@ public class QuizDTO {
     private List<Question> questions;
     private Topic topic;
 
-    public static QuizDTO of(Long id, String header, String description, int duration, Date createDate,
-                             String difficult, List<Question> questions, Topic topic) {
-        return new QuizDTO(id, header, description, duration, createDate, difficult, questions, topic);
-    }
 }

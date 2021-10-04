@@ -30,7 +30,4 @@ public class UserDTO {
     private Role role;
 
 
-    public static UserDTO of(Long id, String email, String password, String name, String surname, Role role,Date createDate, int block) {
-        return new UserDTO(id, email, password, name,surname, createDate, block, role);
-    }
 }

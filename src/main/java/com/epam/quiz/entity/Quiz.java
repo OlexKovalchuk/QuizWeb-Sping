@@ -1,21 +1,23 @@
 package com.epam.quiz.entity;
 
-import com.epam.quiz.dto.QuizDTO;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Data
+@Getter
+@Setter
 @Table(name = "quiz")
-public class Quiz implements Serializable, Cloneable {
+public class Quiz implements Serializable {
     @Id
     @GeneratedValue
     @Column(name = "id")
@@ -30,14 +32,16 @@ public class Quiz implements Serializable, Cloneable {
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    @OneToMany(cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "quiz_id")
+    @ToString.Exclude
     private List<Question> questions = new ArrayList<>();
 
     public void addQuestion(Question question) {
         questions.add(question);
         question.setQuiz(this);
     }
+
     public void removeQuestion(Question question) {
         questions.remove(question);
         question.setQuiz(null);
@@ -49,28 +53,19 @@ public class Quiz implements Serializable, Cloneable {
     private int duration;
     @Column(name = "difficult")
     private String difficult;
+    @Column(name = "archived")
+    private int archived;
 
-
-    public static Quiz of(Long id, String header, String description, int duration, Date createDate,
-                          String difficult, List<Question> questions, Topic topic) {
-        return Quiz.builder()
-                .id(id)
-                .header(header)
-                .description(description)
-                .duration(duration)
-                .createDate(createDate)
-                .difficult(difficult)
-                .questions(questions)
-                .topic(topic)
-                .build();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Quiz quiz = (Quiz) o;
+        return Objects.equals(id, quiz.id);
     }
 
-    public Quiz fromDTO(QuizDTO quizDTO) {
-        return Quiz.of(quizDTO.getId(), quizDTO.getHeader(), quizDTO.getDescription(), quizDTO.getDuration(),
-                quizDTO.getCreateDate(), quizDTO.getDifficult(), quizDTO.getQuestions(), quizDTO.getTopic());
-    }
-
-    public QuizDTO toDTO() {
-        return QuizDTO.of(id, header, description, duration, createDate, difficult, questions, topic);
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }

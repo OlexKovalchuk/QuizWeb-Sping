@@ -3,7 +3,6 @@ package com.epam.quiz.controller;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.RequestDispatcher;
@@ -21,7 +20,9 @@ public class MyErrorController implements ErrorController {
             if(statusCode == HttpStatus.NOT_FOUND.value()) {
                 return "error-404";
             }
-            else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+            else if(statusCode == HttpStatus.FORBIDDEN.value()) {
+                return "error";
+            } else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
                 return "error-500";
             }
         }

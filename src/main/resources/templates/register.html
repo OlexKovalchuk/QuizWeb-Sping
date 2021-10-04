@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <title>Register</title>
@@ -10,22 +10,26 @@
 <div class="header">
     <a href="#default" class="logo">Quiz</a>
     <div class="header-right">
-        <a th:href="@{${#httpServletRequest.requestURI}(lang='EN')}">
+        <a th:class="__${#locale}__=='en'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='EN')}">
             <i th:text="#{msg.en}">EN</i>
         </a>
-        <a th:href="@{${#httpServletRequest.requestURI}(lang='UA')}">
+        <a th:class="__${#locale}__=='ua'?'active':''" th:href="@{${#httpServletRequest.requestURI}(lang='UA')}">
             <i th:text="#{msg.ua}">UA</i>
         </a>
-        <a href="/login" th:text="#{msg.login}">
+
+        <a sec:authorize="!isAuthenticated()" href="/login" th:text="#{msg.login}">
             Login
         </a>
-        <a href="/register" th:text="#{msg.register}">
+        <a sec:authorize="!isAuthenticated()" href="/register" th:text="#{msg.register}">
             Register
+        </a>
+        <a sec:authorize="isAuthenticated()" href="/logout" th:text="#{msg.logout}">
+            Logout
         </a>
         <a href="/home/list" th:text="#{msg.quiz}">
             Home
         </a>
-        <a href="/profile" th:text="#{msg.profile}">
+        <a href="/profile/" th:text="#{msg.profile}">
             Profile
         </a>
     </div>

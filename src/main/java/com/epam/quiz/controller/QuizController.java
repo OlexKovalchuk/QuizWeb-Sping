@@ -23,20 +23,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/quiz")
 public class QuizController {
-    @Autowired
-    private TopicServiceImpl topicService;
-    @Autowired
-    private QuestionServiceImpl questionService;
-    @Autowired
-    private ResultServiceImpl resultService;
-    @Autowired
-    private QuizServiceImpl quizService;
-    @Autowired
-    private UserServiceImpl userService;
+    private final TopicServiceImpl topicService;
+    private final QuestionServiceImpl questionService;
+    private final ResultServiceImpl resultService;
+    private final QuizServiceImpl quizService;
+    private final UserServiceImpl userService;
+
+    public QuizController(TopicServiceImpl topicService, QuestionServiceImpl questionService,
+                          ResultServiceImpl resultService, QuizServiceImpl quizService, UserServiceImpl userService) {
+        this.topicService = topicService;
+        this.questionService = questionService;
+        this.resultService = resultService;
+        this.quizService = quizService;
+        this.userService = userService;
+    }
 
     @GetMapping("/create")
     public String getQuizCreatePage(Model model) {
@@ -104,8 +109,9 @@ public class QuizController {
         List<Question> questions = new ArrayList<>();
         Enumeration<String> params = request.getParameterNames();
         String param = params.nextElement();
-        int id = Integer.parseInt(request.getParameter(param));
-        Quiz quiz = quizService.getQuizById(Long.toString(id)).get();
+        Long id = Long.parseLong(request.getParameter(param));
+        questionService.deleteQuizQuestionsByQuizId(id);
+        Quiz quiz = quizService.getQuizById(request.getParameter(param)).get();
         param = params.nextElement();
         while (params.hasMoreElements()) {
             if (param.charAt(0) == 'd') {
@@ -135,9 +141,9 @@ public class QuizController {
                 questions.add(question);
             }
         }
-        questionService.deleteQuizQuestionsByQuizId(quiz);
+
         questionService.saveQuestionForQuiz(questions);
-        return "redirect:/home/list";
+        return getQuizEditPage(model, Long.toString(quiz.getId()));
     }
 
     @PostMapping("/start")
@@ -151,14 +157,6 @@ public class QuizController {
         Quiz quiz = quizService.getQuizById(id).get();
         int score;
         double correct = 0;
-        List<Question> questionList = quiz.getQuestions();
-        for (int i = 0; i < questionList.size(); i++) {
-            if (request.getParameterValues("question-" + i + "-answers") != null) {
-                if (questionList.get(i).isCorrect(request.getParameterValues("question-" + i + "-answers"))) {
-                    correct++;
-                }
-            }
-        }
         String email;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
@@ -166,10 +164,25 @@ public class QuizController {
         } else {
             email = principal.toString();
         }
+        List<List<Integer>> userAnswers = new ArrayList<>();
+        List<Question> questionList = quiz.getQuestions();
+        for (int i = 0; i < questionList.size(); i++) {
+            if (request.getParameterValues("question-" + i + "-answers") != null) {
+                userAnswers.add(Arrays.stream(request.getParameterValues("question-" + i + "-answers")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList()));
+                if (questionList.get(i).isCorrect(userAnswers.get(i))) {
+                    correct++;
+                }
+            } else {
+                userAnswers.add(null);
+            }
+        }
         score = (int) (100 * correct / questionList.size());
         Result result =
                 Result.builder().quiz(quiz).passedDate(new Timestamp(System.currentTimeMillis())).score(score).user(userService.findUserByEmail(email).get()).build();
+        model.addAttribute("userAnswers", userAnswers);
+        model.addAttribute("quiz", quiz);
+        model.addAttribute("score", score);
         resultService.createResult(result);
-        return "redirect:/home/list";
+        return Pages.QUIZ_RESULT;
     }
 }

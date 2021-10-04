@@ -3,6 +3,7 @@ package com.epam.quiz.repository;
 import com.epam.quiz.dto.UserDTO;
 import com.epam.quiz.entity.Role;
 import com.epam.quiz.entity.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,9 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false " +
             "END FROM User u WHERE u.email = :email")
     boolean isUserExistByEmail(@Param("email") String email);
-
-    @Query("SELECT u FROM User u WHERE u.email = :email")
-    public User getUserByEmail(@Param("email") String email);
 
     Optional<User> findByEmail(String email);
 
@@ -49,4 +47,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User u set u.password=:password where u.email=:email")
     void updateUserPassword(@Param("password") String password, @Param("email") String email);
+@Query("SELECT u from User u where u.email!=:email")
+    List<User> findAllUsers(Pageable pageable,@Param("email") String email);
 }

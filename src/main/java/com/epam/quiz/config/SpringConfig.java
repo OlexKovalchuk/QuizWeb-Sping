@@ -24,6 +24,8 @@ import java.util.Locale;
 @Configuration
 public class SpringConfig implements WebMvcConfigurer {
 
+
+
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
@@ -51,8 +53,9 @@ public class SpringConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor());
 
     }
+
     @Bean
-    public MyUserDetailsService userDetailsService(){
+    public MyUserDetailsService userDetailsService() {
         return new MyUserDetailsService();
     }
 }

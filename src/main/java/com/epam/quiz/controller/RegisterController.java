@@ -32,18 +32,24 @@ import java.util.Optional;
 
 @Controller
 public class RegisterController {
-    @Autowired
+    final
     UserServiceImpl userService;
 
-    @Autowired
+    final
     RoleServiceImpl roleService;
 
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public RegisterController(UserServiceImpl userService, RoleServiceImpl roleService,
+                              AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.roleService = roleService;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+    }
 
 
     @GetMapping(value = "/register")

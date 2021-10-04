@@ -28,21 +28,26 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/profile")
 public class UserController {
-    @Autowired
+    final
     UserServiceImpl userService;
-    @Autowired
+    final
     ResultServiceImpl resultService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserController(UserServiceImpl userService, ResultServiceImpl resultService,
+                          PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+        this.userService = userService;
+        this.resultService = resultService;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+    }
+
+    private final AuthenticationManager authenticationManager;
 
     @GetMapping("/")
     String getProfilePage() {
         return Pages.PROFILE_PAGE;
     }
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
 
     @GetMapping("/edit")
     String getPersonalInfoPage(Model model) {

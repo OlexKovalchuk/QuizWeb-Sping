@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
-    <title>Register</title>
+    <title>Users list</title>
     <link rel="stylesheet" href="/static/css/user_table.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
@@ -94,7 +94,7 @@
                 <input type="radio" name="expand">
                 <a th:href="@{'/admin/users/edit?id='+${user.getId()}}">  <span class="cell primary" data-label="Vehicle"  th:text="${user?.getEmail()}"></span></a>
                 <span class="cell" data-label="Exterior" th:text="${user?.getRole().getName()}"></span>
-                <span class="cell" data-label="Interior" th:text="${user?.getCreateDate()}"></span>
+                <span class="cell" data-label="Interior" th:text="${#dates.format(user?.getCreateDate(), 'dd/MM/yyyy')}"></span>
                 <span class="cell" data-label="Engine" th:text="${user?.getAverageScore()}"></span>
                 <span class="cell" data-label="Trans">
                       <button type="submit" name="block" th:value="${user?.getId()}" style="  background: none!important;

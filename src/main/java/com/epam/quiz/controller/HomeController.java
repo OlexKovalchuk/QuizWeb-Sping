@@ -23,10 +23,13 @@ import java.util.List;
 @RequestMapping(value = "/home")
 public class HomeController {
 
-    @Autowired
-    private QuizServiceImpl quizService;
-    @Autowired
-    private TopicService topicService;
+    private final QuizServiceImpl quizService;
+    private final TopicService topicService;
+
+    public HomeController(QuizServiceImpl quizService, TopicService topicService) {
+        this.quizService = quizService;
+        this.topicService = topicService;
+    }
 
 
     @GetMapping("/list")

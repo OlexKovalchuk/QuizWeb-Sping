@@ -10,8 +10,12 @@ import java.util.List;
 
 @Service
 public class AnswerServiceImpl implements AnswerService {
-    @Autowired
+    final
     AnswerRepository answerRepository;
+
+    public AnswerServiceImpl(AnswerRepository answerRepository) {
+        this.answerRepository = answerRepository;
+    }
 
 
     @Override
@@ -21,7 +25,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public List<Answer> getAllQuestionAnswersById(Long id) {
+    public List<Answer> getAllAnswersByQuestionId(Long id) {
         return answerRepository.findAllById(id);
     }
 }

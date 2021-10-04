@@ -12,8 +12,12 @@ import java.util.List;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
-    @Autowired
+    final
     QuestionRepository questionRepository;
+
+    public QuestionServiceImpl(QuestionRepository questionRepository) {
+        this.questionRepository = questionRepository;
+    }
 
     @Override
     public boolean create(Question question) {
@@ -25,11 +29,15 @@ public class QuestionServiceImpl implements QuestionService {
     public List<Question> getAllQuizQuestions(Long id) {
         return questionRepository.getAllQuizQuestions(id);
     }
-@Transactional
-    public void deleteQuizQuestionsByQuizId(Quiz quiz) {
-        questionRepository.deleteQuestionsByQuizId(quiz.getId());
+
+    @Transactional
+    @Override
+    public void deleteQuizQuestionsByQuizId(Long id) {
+        questionRepository.deleteQuestionsByQuizId(id);
     }
 
+    @Transactional
+    @Override
     public void saveQuestionForQuiz(List<Question> questions) {
         questionRepository.saveAll(questions);
 

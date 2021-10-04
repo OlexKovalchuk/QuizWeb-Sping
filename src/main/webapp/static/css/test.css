@@ -28,3 +28,9 @@ h1                  { margin: 25px 0; font: 14px Georgia, Serif; text-transform:
 #results {
   font: 44px Georgia, Serif;
 }
+.correct{
+  background-color: #17f50b87
+}
+.wrong {
+  background-color: #ff00009e
+}

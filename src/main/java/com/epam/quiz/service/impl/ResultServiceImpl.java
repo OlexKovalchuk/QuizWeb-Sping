@@ -12,15 +12,19 @@ import java.util.Optional;
 
 @Service
 public class ResultServiceImpl implements ResultService {
-    @Autowired
+    final
     ResultRepository resultRepository;
+
+    public ResultServiceImpl(ResultRepository resultRepository) {
+        this.resultRepository = resultRepository;
+    }
 
 
     @Override
     public Double getUserAverageScoreById(Long id) {
         return resultRepository.getUserAvgScoreById(id);
     }
-
+    @Override
     public List<Result> getUserResultsPageByEmail(String email, Pageable pageable){
         return resultRepository.getUserResultsPageByEmail(email, pageable);
     }

@@ -12,8 +12,12 @@ import java.util.Optional;
 
 @Service
 public class RoleServiceImpl implements RoleService {
-    @Autowired
+    final
     RoleRepository roleRepository;
+
+    public RoleServiceImpl(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     @Override
     public List<Role> getAllRoles() {
@@ -32,9 +36,5 @@ public class RoleServiceImpl implements RoleService {
             return true;
         }
         return false;
-    }
-
-    public Optional<Role> findUserRoleByName(String name) {
-        return roleRepository.findByName(name);
     }
 }

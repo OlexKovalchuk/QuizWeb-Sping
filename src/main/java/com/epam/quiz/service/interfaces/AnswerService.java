@@ -7,5 +7,5 @@ import java.util.List;
 public interface AnswerService {
 
     boolean create(Answer answer);
-    List<Answer> getAllQuestionAnswersById(Long id);
+    List<Answer> getAllAnswersByQuestionId(Long id);
 }

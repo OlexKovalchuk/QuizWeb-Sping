@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
-    <title>Register</title>
+    <title>Home</title>
     <link rel="stylesheet" href="/static/css/list.css">
     <link rel="stylesheet" href="/static/css/login.css">
     <link rel="stylesheet" href="/static/css/style.css">
@@ -82,7 +82,7 @@
             th:text="#{msg.duration}"></option>
     <option value="difficult" th:selected="${#httpServletRequest.getAttribute('sort')=='difficult'}"
             th:text="#{msg.difficult}"></option>
-    <option value="date" th:selected="${#httpServletRequest.getAttribute('sort')=='date'}"
+    <option value="createDate" th:selected="${#httpServletRequest.getAttribute('sort')=='createDate'}"
             th:text="#{msg.date}"></option>
     <option value="topic" th:selected="${#httpServletRequest.getAttribute('sort')=='topic'}"
             th:text="#{msg.topic}"></option>
@@ -118,7 +118,7 @@
                          alt="img"
                          style="border-radius: 60%;"/>
                     <h3 class="title" th:text="${quiz?.getHeader()}"></h3>
-                    <p class="description" th:text="${quiz?.getHeader()}"></p>
+                    <p class="description" th:text="${quiz?.getDescription()}"></p>
                 </div>
             </div>
             <div class="jss87 jss106 jss944">
@@ -173,24 +173,6 @@
         </div>
     </div>
 </div>
-<script>
-    function getLink(page) {
-        var sort = document.getElementById('plan');
-        return '@{/home/list?page=' + page + '&sort=' + sort.value + '}';
-    }
-
-    function updateLink(a) {
-        var newurl = "";
-
-        //You could retrieve the object name
-        newurl = a.getAttribute("name");
-
-        //Or, retrieve the id
-        newurl = a.getAttribute("id");
-
-        //redirect
-        location.href = newurl;
-    }
-</script>
+<script
 </body>
 </html>

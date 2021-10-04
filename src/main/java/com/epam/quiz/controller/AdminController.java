@@ -23,23 +23,35 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping(value = "/admin")
 public class AdminController {
-    @Autowired
+    final
     UserServiceImpl userService;
-    @Autowired
+    final
     ResultServiceImpl resultService;
+
+    public AdminController(UserServiceImpl userService, ResultServiceImpl resultService) {
+        this.userService = userService;
+        this.resultService = resultService;
+    }
 
     @GetMapping("/users")
     String getUsers(@RequestParam(defaultValue = "createDate") String sort, @RequestParam(defaultValue =
-            "1") String page, Model model, HttpServletRequest request) {
+            "1") int page, Model model, HttpServletRequest request) {
+        String email;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else {
+            email = principal.toString();
+        }
         if (request.getParameter("block") != null) {
             userService.blockUser(Long.parseLong(request.getParameter("block")));
         }
         request.setAttribute("sort", sort);
-        request.setAttribute("page", Integer.parseInt(page));
+        request.setAttribute("page", page);
 
         model.addAttribute("pagesCount", Math.ceil((userService.getUsersCount() - 1) / 10.0));
         model.addAttribute("users", userService.findAll(PageRequest.of(
-                Integer.parseInt(page) - 1, 10, Sort.by(sort).ascending())));
+         page - 1, 10, Sort.by(sort).ascending()),email));
         return Pages.USER_LIST;
     }
 

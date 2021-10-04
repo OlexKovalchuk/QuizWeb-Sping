@@ -10,14 +10,16 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @Table(name = "topic")
-public class Topic  implements Serializable, Cloneable {
+public class Topic implements Serializable {
     @Id
-    @GeneratedValue
-    @Column(name = "id", insertable = false, updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "name")
     private String name;
+    @Column(name = "archived")
+    private int archived;
 
     public Topic(String name) {
         this.name = name;

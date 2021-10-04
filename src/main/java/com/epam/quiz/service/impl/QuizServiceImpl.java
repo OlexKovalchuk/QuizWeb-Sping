@@ -19,11 +19,17 @@ import java.util.Optional;
 
 @Service
 public class QuizServiceImpl implements QuizService {
-    @Autowired
+    final
     QuizRepository quizRepository;
-    @Autowired
+    final
     TopicRepository topicRepository;
 
+    public QuizServiceImpl(QuizRepository quizRepository, TopicRepository topicRepository) {
+        this.quizRepository = quizRepository;
+        this.topicRepository = topicRepository;
+    }
+
+    @Override
     public Optional<Quiz> getQuizById(String id) {
         return quizRepository.findById(Long.parseLong(id));
     }
@@ -36,12 +42,14 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Transactional
+    @Override
     public void editQuizInfo(QuizDTO quiz) {
         quizRepository.editQuizInfo(quiz.getId(), quiz.getHeader(), quiz.getDescription(), quiz.getDifficult(),
                 quiz.getDuration(), quiz.getTopic());
     }
 
     @Transactional(readOnly = true)
+    @Override
     public List<Quiz> getQuizzesByPage(Pageable pageable, Long topicSort) {
         List<Quiz> quiz = quizRepository.getAllQuizzesByPage(pageable,
                 (long) topicSort).getContent();
@@ -49,11 +57,15 @@ public class QuizServiceImpl implements QuizService {
         return quiz;
     }
 
-@Transactional
+    @Transactional
     @Override
     public boolean deleteQuiz(Long id) {
         if (quizRepository.isQuizExistById(id)) {
-            quizRepository.deleteQuizById(id);
+            if (quizRepository.isAnyPassedQuiz(id)) {
+                quizRepository.archiveQuiz(id);
+            } else {
+                quizRepository.deleteQuizById(id);
+            }
             return true;
         }
         return false;
@@ -66,6 +78,6 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Long getQuizzesCount() {
-        return quizRepository.count() -1;
+        return quizRepository.getQuizzesCount();
     }
 }

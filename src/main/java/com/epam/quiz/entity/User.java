@@ -1,19 +1,21 @@
 package com.epam.quiz.entity;
 
-import com.epam.quiz.dto.UserDTO;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder(toBuilder = true)
 @Table(name = "user")
 public class User implements Serializable, Cloneable {
@@ -36,9 +38,8 @@ public class User implements Serializable, Cloneable {
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private List<Result> results;
+    @OneToMany( mappedBy="user",fetch = FetchType.EAGER)
+    private List<Result> results = new ArrayList<>();
 
 
     public String getAverageScore() {
@@ -53,26 +54,16 @@ public class User implements Serializable, Cloneable {
         return format.format(sum / results.size());
     }
 
-    public static User of(Long id, String email, String password, String name, String surname, Role role,
-                          Date createDate, int block) {
-        return User.builder()
-                .id(id)
-                .email(email)
-                .password(password)
-                .name(name)
-                .surname(surname)
-                .role(role)
-                .createDate(createDate)
-                .block(block)
-                .build();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
     }
 
-    public static User fromDTO(UserDTO userDTO) {
-        return User.of(userDTO.getId(), userDTO.getEmail(), userDTO.getPassword(), userDTO.getName(),
-                userDTO.getSurname(), userDTO.getRole(), userDTO.getCreateDate(), userDTO.getBlock());
-    }
-
-    public UserDTO toDTO() {
-        return UserDTO.of(id, email, null, name, surname, role, createDate, block);
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }

@@ -11,8 +11,12 @@ import java.util.Optional;
 
 @Service
 public class TopicServiceImpl implements TopicService {
-    @Autowired
+    final
     TopicRepository topicRepository;
+
+    public TopicServiceImpl(TopicRepository topicRepository) {
+        this.topicRepository = topicRepository;
+    }
 
 
     @Override
@@ -23,6 +27,7 @@ public class TopicServiceImpl implements TopicService {
         }
         return false;
     }
+    @Override
     public Optional<Topic>findById(String id){
         return topicRepository.findById(Long.parseLong(id));
     }

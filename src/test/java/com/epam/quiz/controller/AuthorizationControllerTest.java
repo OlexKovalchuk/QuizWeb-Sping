@@ -46,7 +46,7 @@ public class AuthorizationControllerTest
     @Test
     public void successLoginTest() throws Exception {
         this.mockMvc.perform(post("/login/process")
-                        .param("email", "kovsas9@gmail.com")
+                        .param("email", "owner@mail.com")
                         .param("password", "12345678"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
