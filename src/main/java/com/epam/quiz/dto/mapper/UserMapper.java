@@ -16,13 +16,16 @@ public class UserMapper {
         return dto;
     }
 
+
     public static User mapFromDto(UserDTO userDTO) {
-        User user =  User.builder()
+        return User.builder()
                 .name(userDTO.getName())
                 .surname(userDTO.getSurname())
                 .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
+                .role(userDTO.getRole())
+                .createDate(userDTO.getCreateDate())
+                .block(userDTO.getBlock())
                 .build();
-        return user;
     }
 }
